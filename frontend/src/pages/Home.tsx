@@ -34,18 +34,15 @@ export default function ImageVerifier() {
   function fetchSelections(): void {
     axios
       .get<string[]>("http://localhost:3001/get-selections")
-      .then((response) => {
-        setSelectedFiles(response.data);
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("Error fetching selections:", error);
       });
   }
 
   useEffect(() => {
-    setSelectedFiles([]);
-    fetchImages();
     fetchSelections();
+    fetchImages();
   }, []);
 
   // Handle image selection
