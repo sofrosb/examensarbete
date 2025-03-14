@@ -71,6 +71,7 @@ export default function ImageVerifier() {
 
   return (
     <Box display="flex" width="100%" height="100vh">
+      {/* Image section */}
       <Box
         width="100%"
         padding="10px"
@@ -79,7 +80,6 @@ export default function ImageVerifier() {
         }}
       >
         <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-          {" "}
           Images
         </Typography>
 
