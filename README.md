@@ -14,12 +14,14 @@ För att köra verktyget:
 
 ### Starta frontend:
 
-````cd frontend
-npm run dev```
-````
+```
+cd frontend
+npm run dev
+```
 
 ### Starta backend
 
-````cd backend
-node server.js```
-````
+```
+cd backend
+node server.js
+```
