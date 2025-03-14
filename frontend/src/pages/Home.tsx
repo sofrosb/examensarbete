@@ -42,6 +42,7 @@ export default function ImageVerifier() {
   }
 
   useEffect(() => {
+    setSelectedFiles([]);
     fetchImages();
     fetchSelections();
   }, []);
@@ -63,6 +64,7 @@ export default function ImageVerifier() {
       })
       .then(() => {
         console.log("Selected files saved.");
+        setSelectedFiles([]);
       })
       .catch((error) => {
         console.error("Error saving selected files:", error);
