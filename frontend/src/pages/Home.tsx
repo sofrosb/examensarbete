@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import ToastService from "../utils/toastify";
 import { Button, Checkbox, Box, Typography } from "@mui/material";
 
 interface FileInfo {
@@ -14,7 +15,7 @@ export default function ImageVerifier() {
   // Get images
   function fetchImages(): void {
     axios
-      .get("https://picsum.photos/v2/list?page=1&limit=25")
+      .get("https://picsum.photos/v2/list?page=1&limit=28")
       .then((response) => {
         console.log("Fetched images:", response.data);
         setFiles(
@@ -64,9 +65,15 @@ export default function ImageVerifier() {
       })
       .then(() => {
         console.log("Selected files saved.");
+        ToastService.success(
+          selectedFiles && selectedFiles.length > 1
+            ? "Images sent"
+            : "Image sent"
+        );
         setSelectedFiles([]);
       })
       .catch((error) => {
+        ToastService.error("Could not send images.");
         console.error("Error saving selected files:", error);
       });
   }
@@ -124,13 +131,13 @@ export default function ImageVerifier() {
             display: "flex",
             flexDirection: "column",
             marginTop: "20px",
-            maxWidth: "1400px",
+            maxWidth: "1245px",
           }}
         >
           <Button
             variant="contained"
             onClick={handleSend}
-            sx={{ alignSelf: "flex-end" }}
+            sx={{ alignSelf: "flex-end", marginLeft: "auto" }}
           >
             Send
           </Button>
