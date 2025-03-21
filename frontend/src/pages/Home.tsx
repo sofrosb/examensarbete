@@ -17,7 +17,6 @@ export default function ImageVerifier() {
     axios
       .get("https://picsum.photos/v2/list?page=1&limit=28")
       .then((response) => {
-        console.log("Fetched images:", response.data);
         setFiles(
           response.data.map((img: any) => ({
             name: img.id,
@@ -34,7 +33,7 @@ export default function ImageVerifier() {
   function fetchSelections(): void {
     axios
       .get<string[]>("http://localhost:3001/get-selections")
-      .then((response) => {})
+      .then(() => {})
       .catch((error) => {
         console.error("Error fetching selections:", error);
       });
@@ -61,7 +60,6 @@ export default function ImageVerifier() {
         selections: selectedFiles,
       })
       .then(() => {
-        console.log("Selected files saved.");
         ToastService.success(
           selectedFiles && selectedFiles.length > 1
             ? "Images sent"
