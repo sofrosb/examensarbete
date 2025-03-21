@@ -10,7 +10,6 @@ app.use(express.json());
 
 const resultsFilePath = path.join(__dirname, "results.json");
 
-// Save selected images
 app.post("/save-selections", (req, res) => {
   const { selections } = req.body;
 
@@ -24,7 +23,6 @@ app.post("/save-selections", (req, res) => {
       existingData = JSON.parse(fs.readFileSync(resultsFilePath, "utf-8"));
     }
 
-    // Update the existing data
     const updatedData = [...existingData, ...selections];
     fs.writeFileSync(resultsFilePath, JSON.stringify(updatedData, null, 2));
 
@@ -35,7 +33,6 @@ app.post("/save-selections", (req, res) => {
   }
 });
 
-// Get saved selections
 app.get("/get-selections", (req, res) => {
   if (!fs.existsSync(resultsFilePath)) {
     return res.json([]);
