@@ -21,14 +21,16 @@ export default function ImageVerifier() {
   // Get images
   function fetchImages(): void {
     axios
-      .get("https://picsum.photos/v2/list?page=1&limit=28")
+      .get("https://picsum.photos/v2/list?page=1&limit=20")
       .then((response) => {
-        setFiles(
-          response.data.map((img: any) => ({
-            name: img.id,
-            url: img.download_url,
-          }))
-        );
+        const fetchedFiles = response.data.map((img: any) => ({
+          name: img.id,
+          url: img.download_url,
+        }));
+
+        setFiles(fetchedFiles);
+
+        setSelectedFiles(fetchedFiles.map((file: any) => file.name));
       })
       .catch((error) => {
         console.error("Error fetching images:", error);
@@ -36,17 +38,17 @@ export default function ImageVerifier() {
   }
 
   // Get selected images
-  function fetchSelections(): void {
-    axios
-      .get<string[]>("http://localhost:3001/get-selections")
-      .then(() => {})
-      .catch((error) => {
-        console.error("Error fetching selections:", error);
-      });
-  }
+  // function fetchSelections(): void {
+  //   axios
+  //     .get<string[]>("http://localhost:3001/get-selections")
+  //     .then(() => {})
+  //     .catch((error) => {
+  //       console.error("Error fetching selections:", error);
+  //     });
+  // }
 
   useEffect(() => {
-    fetchSelections();
+    //fetchSelections();
     fetchImages();
   }, []);
 
