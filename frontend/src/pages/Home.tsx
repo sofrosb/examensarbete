@@ -10,47 +10,71 @@ interface FileInfo {
 }
 
 export default function ImageVerifier() {
+  const [folders, setFolders] = useState<string[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
 
-  const toggleDrawer = (open: boolean) => {
+  // Toggle menu visibility s
+  function toggleMenu(open: boolean) {
     setOpen(open);
-  };
-
-  // Get images
-  function fetchImages(): void {
-    axios
-      .get("https://picsum.photos/v2/list?page=1&limit=20")
-      .then((response) => {
-        const fetchedFiles = response.data.map((img: any) => ({
-          name: img.id,
-          url: img.download_url,
-        }));
-
-        setFiles(fetchedFiles);
-
-        setSelectedFiles(fetchedFiles.map((file: any) => file.name));
-      })
-      .catch((error) => {
-        console.error("Error fetching images:", error);
-      });
   }
 
-  // Get selected images
-  // function fetchSelections(): void {
-  //   axios
-  //     .get<string[]>("http://localhost:3001/get-selections")
-  //     .then(() => {})
-  //     .catch((error) => {
-  //       console.error("Error fetching selections:", error);
-  //     });
-  // }
+  function getImageUrl(folder: string, imageName: string) {
+    const imageUrl = `http://localhost:3001/assets/images/${encodeURIComponent(
+      folder
+    )}/${encodeURIComponent(imageName)}`;
+    return imageUrl;
+  }
 
+  function handleFolderSelect(folder: string) {
+    setSelectedFolder(folder);
+  }
+
+  // Fetch all folders when the component mounts
   useEffect(() => {
-    //fetchSelections();
-    fetchImages();
+    axios
+      .get("http://localhost:3001/api/folders")
+      .then((response) => {
+        const sortedFolders = response.data.sort((a: string, b: string) => {
+          const numA = parseInt(a.replace(/\D/g, ""), 10);
+          const numB = parseInt(b.replace(/\D/g, ""), 10);
+
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return numA - numB;
+          }
+
+          return a.localeCompare(b);
+        });
+
+        setFolders(sortedFolders);
+
+        if (sortedFolders.length > 0) {
+          setSelectedFolder(sortedFolders[0]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching folders:", error);
+      });
   }, []);
+
+  // Fetch images when a folder is selected
+  useEffect(() => {
+    if (selectedFolder) {
+      axios
+        .get(`http://localhost:3001/api/folder/${selectedFolder}`)
+        .then((response) => {
+          setFiles(response.data);
+
+          // Select all images in the folder
+          setSelectedFiles(response.data.map((file: FileInfo) => file.name));
+        })
+        .catch((error) => {
+          console.error("Error fetching images:", error);
+        });
+    }
+  }, [selectedFolder]);
 
   // Handle image selection
   function handleFileSelect(fileName: string): void {
@@ -95,7 +119,7 @@ export default function ImageVerifier() {
       >
         <IconButton
           color="inherit"
-          onClick={() => toggleDrawer(!open)}
+          onClick={() => toggleMenu(!open)}
           sx={{ margin: "5px" }}
         >
           {open ? <CloseIcon /> : <FolderOpen />}
@@ -112,13 +136,43 @@ export default function ImageVerifier() {
           transition: "width 0.3s ease-in-out",
           padding: open ? "10px" : "0px",
           display: "flex",
+          flexDirection: "column",
           alignItems: open ? "start" : "center",
         }}
       >
         {open && (
-          <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-            Choose folder
-          </Typography>
+          <>
+            <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+              Choose folder
+            </Typography>
+            <Box
+              sx={{
+                maxHeight: "80vh",
+                overflowY: "auto",
+                width: "100%",
+              }}
+            >
+              {folders.map((folder) => (
+                <Button
+                  key={folder}
+                  onClick={() => handleFolderSelect(folder)}
+                  sx={{
+                    textAlign: "left",
+                    width: "100%",
+                    justifyContent: "flex-start",
+                    color: "black",
+                    backgroundColor:
+                      selectedFolder === folder ? "#ddd" : "transparent",
+                    ":hover": {
+                      backgroundColor: "#f0f0f0",
+                    },
+                  }}
+                >
+                  {folder}
+                </Button>
+              ))}
+            </Box>
+          </>
         )}
       </Box>
 
@@ -131,7 +185,7 @@ export default function ImageVerifier() {
         }}
       >
         <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-          Images
+          Images in {selectedFolder}
         </Typography>
 
         <Box
@@ -144,16 +198,18 @@ export default function ImageVerifier() {
         >
           {files.map((file) => (
             <Box key={file.name} position="relative">
-              <img
-                src={file.url}
-                alt={file.name}
-                style={{
-                  width: "300px",
-                  height: "auto",
-                  borderRadius: "5px",
-                  maxHeight: "250px",
-                }}
-              />
+              {selectedFolder && (
+                <img
+                  src={getImageUrl(selectedFolder, file.name)}
+                  alt={file.name}
+                  style={{
+                    width: "300px",
+                    height: "auto",
+                    borderRadius: "5px",
+                    maxHeight: "250px",
+                  }}
+                />
+              )}
               <Checkbox
                 checked={selectedFiles.includes(file.name)}
                 onChange={() => handleFileSelect(file.name)}
@@ -171,16 +227,31 @@ export default function ImageVerifier() {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
-            marginTop: "20px",
-            maxWidth: "1245px",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: "10px",
+            marginTop: "10px",
+            maxWidth: "1400px",
+            width: "100%",
+            marginLeft: "auto",
           }}
         >
           <Button
-            variant="contained"
-            onClick={handleSend}
-            sx={{ alignSelf: "flex-end", marginLeft: "auto" }}
+            variant="outlined"
+            onClick={() => {
+              if (selectedFiles.length === files.length) {
+                setSelectedFiles([]);
+              } else {
+                setSelectedFiles(files.map((file) => file.name));
+              }
+            }}
           >
+            {selectedFiles.length === files.length
+              ? "Deselect All"
+              : "Select All"}
+          </Button>
+          <Button variant="contained" onClick={handleSend}>
             Send
           </Button>
         </Box>
