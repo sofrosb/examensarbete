@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ToastService from "../utils/toastify";
-import { Button, Checkbox, Box, Typography } from "@mui/material";
+import { Button, Checkbox, Box, Typography, IconButton } from "@mui/material";
+import { Close as CloseIcon, FolderOpen } from "@mui/icons-material";
 
 interface FileInfo {
   name: string;
@@ -11,6 +12,11 @@ interface FileInfo {
 export default function ImageVerifier() {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (open: boolean) => {
+    setOpen(open);
+  };
 
   // Get images
   function fetchImages(): void {
@@ -75,15 +81,54 @@ export default function ImageVerifier() {
 
   return (
     <Box display="flex" width="100%" height="100vh">
+      {/* Menu icon container */}
       <Box
-        width="100%"
-        padding="10px"
         sx={{
+          width: "50px",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "center",
+          backgroundColor: open ? "#f5f5f5" : "white",
+        }}
+      >
+        <IconButton
+          color="inherit"
+          onClick={() => toggleDrawer(!open)}
+          sx={{ margin: "5px" }}
+        >
+          {open ? <CloseIcon /> : <FolderOpen />}
+        </IconButton>
+      </Box>
+
+      {/* Sidebar */}
+      <Box
+        sx={{
+          width: open ? "250px" : "0px",
+          backgroundColor: "#f5f5f5",
+          height: "100vh",
+          overflow: "hidden",
+          transition: "width 0.3s ease-in-out",
+          padding: open ? "10px" : "0px",
+          display: "flex",
+          alignItems: open ? "start" : "center",
+        }}
+      >
+        {open && (
+          <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+            Choose folder
+          </Typography>
+        )}
+      </Box>
+
+      {/* Image section */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          padding: "10px",
           overflowY: "auto",
         }}
       >
         <Typography variant="h6" sx={{ marginBottom: "10px" }}>
-          {" "}
           Images
         </Typography>
 
