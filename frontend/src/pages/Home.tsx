@@ -14,7 +14,7 @@ export default function ImageVerifier() {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   // Toggle menu visibility
   function toggleMenu(open: boolean) {
