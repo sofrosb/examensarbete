@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ToastService from "../utils/toastify";
-import { Button, Checkbox, Box, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  IconButton,
+  Modal,
+  Typography,
+} from "@mui/material";
 import { Close as CloseIcon, FolderOpen } from "@mui/icons-material";
 
 interface FileInfo {
@@ -14,6 +21,7 @@ export default function ImageVerifier() {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [open, setOpen] = useState(true);
 
   // Generate a URL for an image based on folder and image name
@@ -28,6 +36,16 @@ export default function ImageVerifier() {
   function handleFolderSelect(folder: string) {
     setSelectedFolder(folder);
     localStorage.setItem("selectedFolder", folder);
+  }
+
+  // Open modal with clicked image
+  function handleImageClick(imageUrl: string) {
+    setSelectedImage(imageUrl);
+  }
+
+  // Close modal
+  function handleCloseModal() {
+    setSelectedImage(null);
   }
 
   // Fetch all folders when the component mounts
@@ -224,7 +242,11 @@ export default function ImageVerifier() {
                     height: "auto",
                     borderRadius: "5px",
                     maxHeight: "250px",
+                    cursor: "pointer",
                   }}
+                  onClick={() =>
+                    handleImageClick(getImageUrl(selectedFolder, file.name))
+                  }
                 />
               )}
               <Checkbox
@@ -273,6 +295,47 @@ export default function ImageVerifier() {
           </Button>
         </Box>
       </Box>
+
+      {/* Modal for image */}
+      <Modal open={!!selectedImage} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 1,
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            onClick={handleCloseModal}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Selected"
+              style={{
+                maxWidth: "90vw",
+                maxHeight: "80vh",
+                borderRadius: "5px",
+              }}
+            />
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 }
