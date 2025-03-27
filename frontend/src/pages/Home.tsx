@@ -114,7 +114,7 @@ export default function ImageVerifier() {
             ? "Images sent"
             : "Image sent"
         );
-        setSelectedFiles([]);
+        setSelectedFiles(selectedFiles);
       })
       .catch((error) => {
         ToastService.error("Could not send images.");
