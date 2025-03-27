@@ -4,9 +4,9 @@
 
 ## Beskrivning
 
-Detta är ett verktyg för bildverifiering och ska komplettera ett AI-baserat system för automatisk bildextraktion från filmer med inbrända undertexter. Eftersom AI-verktyget inte är helt exakt behövs en lösning för att granska och bekräfta resultaten i efterhand. Det här verktyget är till en början fristående men ska senare implementeras i ett annat system.
+Detta är ett verktyg för bildverifiering och ska komplettera ett AI-baserat system för automatisk bildextraktion från filmer med inbrända undertexter. Eftersom AI-verktyget inte är helt exakt behövs en lösning för att manuellt granska och bekräfta resultaten. Det här verktyget är nu fristående men ska på sikt implementeras i ett annat system.
 
-Den här första versionen av verktyget hämtar bilder från ett gratis-API (då annat testmaterial saknades), presenterar dem för användaren som sedan kan markera vilka bilder som är korrekta och skickar sedan svaret som json-fil. Resultaten kommer både användas för att träna systemet att bli bättre och för att rapportera att det finns inbränd undertext till mottagaren.
+I den här första versionen hämtar verktyget bilder från backend, visar dem för användaren, som sedan kan markera vilka bilder som är korrekta. Därefter skickas resultatet som json-fil. Informationen kommer att användas både för att förbättra AI-modellen och för att rapportera förekomst av inbränd undertext.
 
 ## Körning
 
