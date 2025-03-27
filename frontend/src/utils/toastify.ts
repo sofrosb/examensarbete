@@ -7,6 +7,9 @@ const ToastService = {
       autoClose: 5000,
     });
   },
+  warning: (message: string) => {
+    toast.warn(message, { position: "top-right", autoClose: 5000 });
+  },
   error: (message: string) => {
     toast.error(message, {
       position: "top-right",

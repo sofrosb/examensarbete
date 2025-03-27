@@ -16,7 +16,7 @@ export default function ImageVerifier() {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
 
-  // Toggle menu visibility s
+  // Toggle menu visibility
   function toggleMenu(open: boolean) {
     setOpen(open);
   }
@@ -87,6 +87,13 @@ export default function ImageVerifier() {
 
   // Send selected images
   function handleSend(): void {
+    if (selectedFiles.length === 0) {
+      ToastService.warning(
+        "You must select at least one image before sending."
+      );
+      return;
+    }
+
     axios
       .post("http://localhost:3001/save-selections", {
         selections: selectedFiles,
