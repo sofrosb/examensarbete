@@ -16,6 +16,7 @@ export default function ImageVerifier() {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [open, setOpen] = useState(true);
 
+  // Generate a URL for an image based on folder and image name
   function getImageUrl(folder: string, imageName: string) {
     const imageUrl = `http://localhost:3001/assets/images/${encodeURIComponent(
       folder
@@ -23,8 +24,10 @@ export default function ImageVerifier() {
     return imageUrl;
   }
 
+  // Handle folder selection
   function handleFolderSelect(folder: string) {
     setSelectedFolder(folder);
+    localStorage.setItem("selectedFolder", folder);
   }
 
   // Fetch all folders when the component mounts
@@ -45,7 +48,11 @@ export default function ImageVerifier() {
 
         setFolders(sortedFolders);
 
-        if (sortedFolders.length > 0) {
+        const storedFolder = localStorage.getItem("selectedFolder");
+
+        if (storedFolder && sortedFolders.includes(storedFolder)) {
+          setSelectedFolder(storedFolder);
+        } else if (sortedFolders.length > 0) {
           setSelectedFolder(sortedFolders[0]);
         }
       })
@@ -70,6 +77,14 @@ export default function ImageVerifier() {
         });
     }
   }, [selectedFolder]);
+
+  // Restore the last selected folder when the component mounts
+  useEffect(() => {
+    const storedFolder = localStorage.getItem("selectedFolder");
+    if (storedFolder) {
+      setSelectedFolder(storedFolder);
+    }
+  }, []);
 
   // Handle image selection
   function handleFileSelect(fileName: string): void {
