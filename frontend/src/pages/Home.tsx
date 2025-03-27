@@ -16,11 +16,6 @@ export default function ImageVerifier() {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [open, setOpen] = useState(true);
 
-  // Toggle menu visibility
-  function toggleMenu(open: boolean) {
-    setOpen(open);
-  }
-
   function getImageUrl(folder: string, imageName: string) {
     const imageUrl = `http://localhost:3001/assets/images/${encodeURIComponent(
       folder
@@ -126,7 +121,7 @@ export default function ImageVerifier() {
       >
         <IconButton
           color="inherit"
-          onClick={() => toggleMenu(!open)}
+          onClick={() => setOpen((prev) => !prev)}
           sx={{ margin: "5px" }}
         >
           {open ? <CloseIcon /> : <FolderOpen />}
